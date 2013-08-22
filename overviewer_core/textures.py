@@ -771,9 +771,6 @@ def billboard(blockid=[], imagename=None, **kwargs):
 ## and finally: actual texture definitions
 ##
 
-# stone
-block(blockid=1, top_image="textures/blocks/stone.png")
-
 @material(blockid=2, data=range(11)+[0x10,], solid=True)
 def grass(self, blockid, data):
     # 0x10 bit means SNOW
@@ -875,12 +872,6 @@ def lava(self, blockid, data):
 block(blockid=12, top_image="textures/blocks/sand.png")
 # gravel
 block(blockid=13, top_image="textures/blocks/gravel.png")
-# gold ore
-block(blockid=14, top_image="textures/blocks/oreGold.png")
-# iron ore
-block(blockid=15, top_image="textures/blocks/oreIron.png")
-# coal ore
-block(blockid=16, top_image="textures/blocks/oreCoal.png")
 
 @material(blockid=17, data=range(12), solid=True)
 def wood(self, blockid, data):
@@ -929,8 +920,6 @@ def leaves(self, blockid, data):
 
 # sponge
 block(blockid=19, top_image="textures/blocks/sponge.png")
-# lapis lazuli ore
-block(blockid=21, top_image="textures/blocks/oreLapis.png")
 # lapis lazuli block
 block(blockid=22, top_image="textures/blocks/blockLapis.png")
 
@@ -1955,8 +1944,6 @@ def wire(self, blockid, data):
 
     return img
 
-# diamond ore
-block(blockid=56, top_image="textures/blocks/oreDiamond.png")
 # diamond block
 block(blockid=57, top_image="textures/blocks/blockDiamond.png")
 
@@ -2447,9 +2434,6 @@ def pressure_plate(self, blockid, data):
         alpha_over(img,top, (0,12),top)
     
     return img
-
-# normal and glowing redstone ore
-block(blockid=[73, 74], top_image="textures/blocks/oreRedstone.png")
 
 # stone a wood buttons
 @material(blockid=(77,143), data=range(16), transparent=True)
@@ -3658,9 +3642,6 @@ def wooden_slabs(self, blockid, data):
     
     return img
 
-# emerald ore
-block(blockid=129, top_image="textures/blocks/oreEmerald.png")
-
 # emerald block
 block(blockid=133, top_image="textures/blocks/blockEmerald.png")
 
@@ -4064,3 +4045,694 @@ def hopper(self, blockid, data):
     alpha_over(img, hop_top, (0,-6), hop_top)
 
     return img
+
+### BTW Modifications
+# hemp (based on carrots and potatoes) 
+@material(blockid=241, data=range(9), transparent=True, nospawn=True)
+def hemp(self, blockid, data):
+    if data != 8: # if data is not 8 then it is the bottom half 
+        raw_crop = self.load_image_texture("textures/blocks/fcBlockHemp_bottom_0%d.png" % (data))
+    else: # top piece
+        raw_crop = self.load_image_texture("textures/blocks/fcBlockHemp_top.png")
+    crop1 = self.transform_image_top(raw_crop)
+    crop2 = self.transform_image_side(raw_crop)
+    crop3 = crop2.transpose(Image.FLIP_LEFT_RIGHT)
+
+    img = Image.new("RGBA", (24,24), self.bgcolor)
+    alpha_over(img, crop1, (0,12), crop1)
+    alpha_over(img, crop2, (6,3), crop2)
+    alpha_over(img, crop3, (6,3), crop3)
+    return img
+
+# fertilized farmland, based on vanilla farmland 
+@material(blockid=204, data=range(9), solid=True)
+def farmlandfertalized(self, blockid, data):
+    top = self.load_image_texture("textures/blocks/FCBlockFarmlandFertilized_wet.png")
+    if data == 0:
+        top = self.load_image_texture("textures/blocks/FCBlockFarmlandFertilized_dry.png")
+    return self.build_block(top, self.load_image_texture("textures/blocks/dirt.png"))
+
+###Strata Updates for blocks .. (remove orginals!)
+
+
+#stone
+@material(blockid=1, data=range(3), solid=True)
+def fcStoneStrata(self, blockid, data):
+    if data == 0: #default
+        top = side = self.load_image_texture("textures/blocks/stone.png")
+    if data != 0: #Strata Stone
+        top = side = self.load_image_texture("textures/blocks/fcBlockStoneStrata_{0}.png".format(data))
+
+    return self.build_block(top, side) 
+
+#Stratafied Ores
+@material(blockid=[14,15,16,21,56,73,74,129], data=range(3), solid=True)
+def fcOreStrata(self, blockid, data):
+    if blockid == 14: #Gold
+      oreName = "Gold"
+    elif blockid == 15: #Iron
+      oreName = "Iron"
+    elif blockid == 16: #Coal
+      oreName = "Coal"
+    elif blockid == 21: #Lapis
+      oreName = "Lapis"
+    elif blockid == 56: #Diamond
+      oreName = "Diamond"
+    elif blockid in (73,74): #Redstone
+      oreName = "Redstone"
+    elif blockid == 129: #Emerald
+      oreName = "Emerald"
+    else: #for debugging if something gets in here that doesn't match. This will error looking for the texture ore<blockid>.png
+      oreName = blockid
+
+    if data == 0: #default
+        top = side = self.load_image_texture("textures/blocks/ore{0}.png".format(oreName))
+    if data != 0: #Strata ore
+        top = side = self.load_image_texture("textures/blocks/fcBlockore{0}Strata_{1}.png".format(oreName, data))
+
+    return self.build_block(top, side)
+
+#Dirty Blocks
+@material(blockid=180, data=range(8), solid=True)
+def fcAestheticOpaqueEarth(self, blockid, data):
+    if data in (0,1,2): #Blight, data == Blight level -- easy peasy
+        top = self.load_image_texture("textures/blocks/FCBlockBlightL{0}_top.png".format(data))
+        side = self.load_image_texture("textures/blocks/FCBlockBlightL{0}_side.png".format(data))    
+    elif data == 3: #Subterranean Stage 3 Blight
+        top = side = self.load_image_texture("textures/blocks/FCBlockBlightL2_roots.png")
+    elif data == 4: #Mature Blight
+        top = self.load_image_texture("textures/blocks/FCBlockBlightL3_top.png")
+        side = self.load_image_texture("textures/blocks/FCBlockBlightL3_side.png")    
+    elif data == 5: #Subterranean Mature Blight
+        top = side = self.load_image_texture("textures/blocks/FCBlockBlightL3_roots.png")
+    elif data == 6: #Packed Earth
+        top = side = self.load_image_texture("textures/blocks/FCBlockPackedEarth.png")
+    elif data == 7: #nuPoo
+        top = side = self.load_image_texture("textures/blocks/fcBlockDung.png")
+        
+    return self.build_block(top, side)
+
+#Dirty Half the blocks they used to be
+@material(blockid=206, data=range(8), transparent=True)
+def fcDirtSlab(self, blockid, data) :
+    if data in (0,1):
+        #Standard Dirt Slabs
+        top = side = self.load_image_texture("textures/blocks/dirt.png")
+    
+    elif data in (2,3):
+        #Grass Slab
+        top = self.load_image_texture("textures/blocks/grass_top.png")
+        side = self.load_image_texture("textures/blocks/grass_side.png")
+    
+    elif data in (6,7) :
+        #Packed Dirt Slabs
+        top = side = self.load_image_texture("textures/blocks/FCBlockPackedEarth.png")
+    
+    else:
+        #Shouldnt be here... but.. just in case. this should be recognisable..
+        top = side = self.load_image_texture("textures/blocks/fcBlockSlats.png")
+    
+    mask = side.crop((0,8,16,16))
+    side = Image.new(side.mode, side.size, self.bgcolor)
+    alpha_over(side, mask,(0,0,16,8), mask)
+    top = self.transform_image_top(top)
+    side = self.transform_image_side(side)
+    otherside = side.transpose(Image.FLIP_LEFT_RIGHT)
+
+    sidealpha = side.split()[3]
+    side = ImageEnhance.Brightness(side).enhance(0.9)
+    side.putalpha(sidealpha)
+    othersidealpha = otherside.split()[3]
+    otherside = ImageEnhance.Brightness(otherside).enhance(0.8)
+    otherside.putalpha(othersidealpha)        
+    img = Image.new("RGBA", (24,24), self.bgcolor)
+    
+    if data == 3:#Grass color overlay, this may need adjusting for snow..
+       alpha_over(img, self.biome_grass_texture, (0, 0), self.biome_grass_texture)
+
+    elif data == 2:#Grass color overlay, this may need adjusting for snow..
+       alpha_over(img, self.biome_grass_texture, (0, 6), self.biome_grass_texture)
+       
+    if data in (0,2,6):
+        #bottom slab
+        alpha_over(img, side, (0,12), side)
+        alpha_over(img, top, (0,6), top)
+        alpha_over(img, otherside, (12,12), otherside)
+    
+    elif data in(1,3,7):
+        #top slab
+        alpha_over(img, side, (0,6), side)
+        alpha_over(img, top, (0,0), top)
+        alpha_over(img, otherside, (12,6), otherside)
+
+    
+    return img
+
+#BTW Axels
+@material(blockid=247,data=range(12), transparent=True, nospawn=True)
+def fcAxel(self, blockid, data):
+    side = self.load_image_texture("textures/blocks/fcBlockAxle_side.png")
+    end = self.load_image_texture("textures/blocks/fcBlockAxle_end.png")
+    
+    ImageDraw.Draw(end).rectangle((0,0,5,15),outline=(0,0,0,0),fill=(0,0,0,0))
+    ImageDraw.Draw(end).rectangle((10,0,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+    ImageDraw.Draw(end).rectangle((0,0,15,5),outline=(0,0,0,0),fill=(0,0,0,0))
+    ImageDraw.Draw(end).rectangle((0,10,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+
+    ImageDraw.Draw(side).rectangle((0,0,15,5),outline=(0,0,0,0),fill=(0,0,0,0))
+    ImageDraw.Draw(side).rectangle((0,10,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+    
+    
+    if data in (0,1,2,3):
+        #up and down
+        
+        top = self.transform_image_top(end)
+        side = self.transform_image_side(side.rotate(90))
+        
+        other_side = side.transpose(Image.FLIP_LEFT_RIGHT)
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+        alpha_over(img,side, (5,4),side)
+        alpha_over(img,top, (0,0),top)
+        alpha_over(img,other_side, (7,4),other_side)       
+        
+    elif data in (4,5,6,7):
+        #North and South
+        
+        top = self.transform_image_top(side.rotate(90))
+        side = self.transform_image_side(side)
+        
+        other_side = self.transform_image_side(end)
+        other_side = other_side.transpose(Image.FLIP_LEFT_RIGHT)
+        
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+        alpha_over(img,side, (5,4),side)
+        alpha_over(img,top, (0,5),top)
+        alpha_over(img,other_side, (12,7),other_side)
+        
+    elif data in (8,9,10,11):
+        #East and West
+
+        top = self.transform_image_top(side.rotate(90))
+        top = top.transpose(Image.FLIP_LEFT_RIGHT)        
+        side = self.transform_image_side(side)
+        side = side.transpose(Image.FLIP_LEFT_RIGHT)
+        
+        other_side = self.transform_image_side(end)
+        
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+        alpha_over(img,side, (7,4),side)
+        alpha_over(img,top, (0,4),top)
+        alpha_over(img,other_side, (0,6),other_side)
+        
+    return img
+
+#BTW 4-Direction Blocks
+# Pump
+@material(blockid=[195],data=range(8), solid=True)
+def fcFourDirectionalBlocks(self, blockid, data):
+    if blockid == 195:
+        #Pump
+        top = self.load_image_texture("textures/blocks/fcBlockScrewPump_top.png")
+        side = self.load_image_texture("textures/blocks/fcBlockScrewPump_side.png")
+        front = self.load_image_texture("textures/blocks/fcBlockScrewPump_front.png")
+        
+    if data in (0,4):
+        #Facing North
+        img = self.build_block(top,side);
+    elif data in (1,5):
+        #Facing South
+        img = self.build_full_block(top,None,None,side,front);
+    elif data in (2,6):
+        #Facing West
+        img = self.build_full_block(top,None,None,front,side);
+    elif data in (3,7):
+        #Facing East
+        img = self.build_block(top,side);
+        
+    return img;
+
+
+#BTW 6-Direction blocks
+#BUD, Gearbox, BD.. etc
+@material(blockid=[218,233,248],data=range(16), solid=True)
+def fcSixDirectionalBlocks(self, blockid, data):
+    if blockid == 218:
+        #Buddy Block
+        top = side = self.load_image_texture("textures/blocks/fcBlockBuddyBlock.png")
+        inputSide = self.load_image_texture("textures/blocks/fcBlockBuddyBlock_front.png")
+    elif blockid == 233:
+        #BD
+        top = self.load_image_texture("textures/blocks/fcBlockBlockDispenser_top.png")
+        side = self.load_image_texture("textures/blocks/fcBlockBlockDispenser_side.png")
+        inputSide = self.load_image_texture("textures/blocks/fcBlockBlockDispenser_front.png")
+    elif blockid == 248:
+        #Gear Box
+        top = side = self.load_image_texture("textures/blocks/fcBlockGearBox.png")
+        inputSide = self.load_image_texture("textures/blocks/fcBlockGearBox_input.png")
+    
+    if data in (1,9):
+        #Facing Up
+        img = self.build_full_block(inputSide,None,None,side,side);
+    elif data in (3,11):
+        #Facing South
+        img = self.build_full_block(top,None,None,side,inputSide);
+    elif data in (4,12):
+        #Facing West
+        img = self.build_full_block(top,None,None,inputSide,side);
+    else:
+        img = self.build_block(top,side);
+    
+    
+    return img;
+
+#BTW Sub-blocks (Siding & Fences)
+@material(blockid=[184,185,186,188,196,198,200], data=range(16), transparent=True, nospawn=True)
+def fcBlockDeco(self, blockid, data):
+    #Images for various sub blocks
+    if blockid == 184: # Oak
+        block_top = self.load_image_texture("textures/blocks/FCBlockDecorativeWoodOak.png").copy()
+        block_side = self.load_image_texture("textures/blocks/FCBlockDecorativeWoodOak.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/FCBlockDecorativeWoodOak.png").copy()
+    elif blockid == 185: # Smooth Stone
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeStone.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeStone.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeStone.png").copy()
+    elif blockid == 186: # Brick
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeBrick.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeBrick.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeBrick.png").copy()
+    elif blockid == 188: # Nether Brick
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeNetherBrick.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeNetherBrick.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeNetherBrick.png").copy()
+    elif blockid == 191: # White Stone
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteSone.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteSone.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteSone.png").copy()
+    elif blockid == 196: # Spruce
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodSpruce.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodSpruce.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodSpruce.png").copy()
+    elif blockid == 198: # Birch
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodBirch.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodBirch.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodBirch.png").copy()
+    elif blockid == 200: # Jungle
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
+    
+    if data in (0,2): #Top/Bottom Siding based on slab code
+        # cut the side texture in half
+        mask = block_side.crop((0,8,16,16))
+        block_side = Image.new(block_side.mode, block_side.size, self.bgcolor)
+        alpha_over(block_side, mask,(0,0,16,8), mask)
+        block_top = self.transform_image_top(block_top)
+        block_side = self.transform_image_side(block_side)
+        otherside = block_side.transpose(Image.FLIP_LEFT_RIGHT)
+        
+        sidealpha = block_side.split()[3]
+        block_side = ImageEnhance.Brightness(block_side).enhance(0.9)
+        block_side.putalpha(sidealpha)
+        othersidealpha = otherside.split()[3]
+        otherside = ImageEnhance.Brightness(otherside).enhance(0.8)
+        otherside.putalpha(othersidealpha)        
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+
+        if data == 2:
+            # plain siding
+            alpha_over(img, block_side, (0,12), block_side)
+            alpha_over(img, block_top, (0,6), block_top)
+            alpha_over(img, otherside, (12,12), otherside)
+            
+        elif data == 0:
+            #upside down siding
+            alpha_over(img, block_side, (0,6), block_side)
+            alpha_over(img, block_top, (0,0), block_top)
+            alpha_over(img, otherside, (12,6), otherside)
+
+    elif data in (4,6):
+        #N/S Sideing
+        fullside = block_side.copy()
+        mask = block_side.crop((7,0,16,16))
+        block_side = Image.new(block_side.mode, block_side.size, self.bgcolor)
+        alpha_over(block_side, mask,(0,0,7,16), mask)
+        mask = block_top.crop((0,7,16,16))
+        block_top = Image.new(block_top.mode, block_top.size, self.bgcolor)
+        alpha_over(block_top, mask,(0,0,16,7), mask)
+        block_top = self.transform_image_top(block_top)
+        block_side = self.transform_image_side(block_side)
+        fullside = self.transform_image_side(fullside)
+        fullside = fullside.transpose(Image.FLIP_LEFT_RIGHT)
+        
+        sidealpha = block_side.split()[3]
+        block_side = ImageEnhance.Brightness(block_side).enhance(0.9)
+        block_side.putalpha(sidealpha)
+        topalpha = block_top.split()[3]
+        block_top = ImageEnhance.Brightness(block_top).enhance(0.9)
+        block_top.putalpha(topalpha)        
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+        
+        if data == 4:
+            # North side
+            alpha_over(img, block_side, (7,9), block_side)
+            alpha_over(img, block_top, (7,3), block_top)
+            alpha_over(img, fullside, (12,6), fullside)
+        
+        elif data == 6:
+            #South side
+            alpha_over(img, block_side, (1,6), block_side)
+            alpha_over(img, block_top, (1,0), block_top)
+            alpha_over(img, fullside, (6,3), fullside)
+        
+    elif data == 14: #Fence block, code based on standard fences
+        # generate the textures of the fence
+        ImageDraw.Draw(block_top).rectangle((0,0,5,15),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(block_top).rectangle((10,0,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(block_top).rectangle((0,0,15,5),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(block_top).rectangle((0,10,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+    
+        ImageDraw.Draw(block_side).rectangle((0,0,5,15),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(block_side).rectangle((10,0,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+    
+        # Create the sides and the top of the big stick
+        block_side = self.transform_image_side(block_side)
+        fence_other_side = block_side.transpose(Image.FLIP_LEFT_RIGHT)
+        block_top = self.transform_image_top(block_top)
+    
+        # Darken the sides slightly. These methods also affect the alpha layer,
+        # so save them first (we don't want to "darken" the alpha layer making
+        # the block transparent)
+        sidealpha = block_side.split()[3]
+        block_side = ImageEnhance.Brightness(block_side).enhance(0.9)
+        block_side.putalpha(sidealpha)
+        othersidealpha = fence_other_side.split()[3]
+        fence_other_side = ImageEnhance.Brightness(fence_other_side).enhance(0.8)
+        fence_other_side.putalpha(othersidealpha)
+    
+        # Compose the fence big stick
+        fence_big = Image.new("RGBA", (24,24), self.bgcolor)
+        alpha_over(fence_big,block_side, (5,4),block_side)
+        alpha_over(fence_big,block_top, (0,0),block_top)
+        alpha_over(fence_big,fence_other_side, (7,4),fence_other_side)
+        
+        # Now render the small sticks.
+        # Create needed images
+        ImageDraw.Draw(fence_small_side).rectangle((0,0,15,0),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(fence_small_side).rectangle((0,4,15,6),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(fence_small_side).rectangle((0,10,15,16),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(fence_small_side).rectangle((0,0,4,15),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(fence_small_side).rectangle((11,0,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+    
+        # Create the sides and the top of the small sticks
+        fence_small_side = self.transform_image_side(fence_small_side)
+        fence_small_other_side = fence_small_side.transpose(Image.FLIP_LEFT_RIGHT)
+        
+        # Darken the sides slightly. These methods also affect the alpha layer,
+        # so save them first (we don't want to "darken" the alpha layer making
+        # the block transparent)
+        sidealpha = fence_small_other_side.split()[3]
+        fence_small_other_side = ImageEnhance.Brightness(fence_small_other_side).enhance(0.9)
+        fence_small_other_side.putalpha(sidealpha)
+        sidealpha = fence_small_side.split()[3]
+        fence_small_side = ImageEnhance.Brightness(fence_small_side).enhance(0.9)
+        fence_small_side.putalpha(sidealpha)
+    
+        # Create img to compose the fence
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+    
+        # Position of fence small sticks in img.
+        # These postitions are strange because the small sticks of the 
+        # fence are at the very left and at the very right of the 16x16 images
+        pos_top_left = (2,3)
+        pos_top_right = (10,3)
+        pos_bottom_right = (10,7)
+        pos_bottom_left = (2,7)
+        
+        # +x axis points top right direction
+        # +y axis points bottom right direction
+        # First compose small sticks in the back of the image, 
+        # then big stick and thecn small sticks in the front.
+
+        # BTW fences seem to make connections based the neighbour block and not metatdata, so I can't connect the fences at this time.
+        # confirmed by FC that connection data is not part of block data.
+        # Either is vanilla so that data must be getting pulled somewehre else.
+        # Will need to dig deeper after most blocks are handeled.
+        
+        #        if (data & 0b0001) == 1:
+#            alpha_over(img,fence_small_side, pos_top_left,fence_small_side)                # top left
+#        if (data & 0b1000) == 8:
+#            alpha_over(img,fence_small_other_side, pos_top_right,fence_small_other_side)    # top right
+            
+        alpha_over(img,fence_big,(0,0),fence_big)
+            
+#        if (data & 0b0010) == 2:
+#            alpha_over(img,fence_small_other_side, pos_bottom_left,fence_small_other_side)      # bottom left    
+#        if (data & 0b0100) == 4:
+#            alpha_over(img,fence_small_side, pos_bottom_right,fence_small_side)                  # bottom right
+    
+    else:
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+    
+    return img
+
+#BloodWood Leaves
+@material(blockid=211, data=range(16), transparent=True, solid=True)
+def fcBloodWoodLeaves(self, blockid, data):
+    leaves = self.load_image_texture("textures/blocks/fcBlockLeavesBloodWood_old.png")
+    return self.build_block(leaves, leaves)
+
+##Blood wood trees based on vanilla tree code
+@material(blockid=212, data=range(6), solid=True)
+def fcBloodWood(self, blockid, data):
+    # choose textures
+    top = self.load_image_texture("textures/blocks/fcBlockBloodWood.png")
+    side = self.load_image_texture("textures/blocks/fcBlockBloodWood_side.png")
+
+    # choose orientation and paste textures
+    if data == 0:
+        return self.build_block(top, side)
+    elif data == 1:
+        return self.build_block(top, side.rotate(180))
+    elif data == 2: # north
+        return self.build_full_block(side, None, None, side.rotate(90), top)
+    elif data == 3: # south
+        return self.build_full_block(side.rotate(180), None, None, side.rotate(270), top)
+    elif data == 4: # west
+        return self.build_full_block(side.rotate(90), None, None, top, side.rotate(270))
+    elif data == 5: # east
+        return self.build_full_block(side.rotate(270), None, None, top, side.rotate(90))
+
+##The following code was provided by Maxsi
+#Big thanks for sharing the work you had done!
+
+# nuSFS
+block(blockid=209, top_image="textures/blocks/fcBlockSoulforgedSteel.png")
+
+#fcLightBlockOff
+block(blockid=222, top_image="textures/blocks/fcBlockLightBlock.png")
+
+#fcLightBlockOn
+block(blockid=223, top_image="textures/blocks/fcBlockLightBlock_lit.png")
+
+#FcBBQ aka Hibachi
+block(blockid=224, top_image="textures/blocks/fcBlockHibachi_top.png", side_image="textures/blocks/fcBlockHibachi_side.png")
+
+#FCHopper - may need fancy cutting later.. ToDo?
+block(blockid=225, top_image="textures/blocks/fcBlockHopper_top.png", side_image="textures/blocks/fcBlockHopper_side.png")
+
+#fcPlatform
+block(blockid=227, top_image="textures/blocks/fcBlockPlatform_top.png", side_image="textures/blocks/fcBlockPlatform_side.png")
+
+#cement --Untested
+block(blockid=228, top_image="textures/blocks/fcBlockCement_drying.png")
+
+#fcPulley --fixed
+block(blockid=229, top_image="textures/blocks/fcBlockPulley_top.png", side_image="textures/blocks/fcBlockPulley_side.png")
+
+#fcCauldron
+block(blockid=234, top_image="textures/blocks/fcBlockCauldron_top.png", side_image="textures/blocks/fcBlockCauldron_side.png")
+
+#fcMillStone
+block(blockid=243, top_image="textures/blocks/fcBlockMillStone_top.png", side_image="textures/blocks/fcBlockMillStone_side.png")
+
+# fcTurntable
+block(blockid=249, top_image="textures/blocks/fcBlockTurntable_top.png", side_image="textures/blocks/fcBlockTurntable_side.png")
+
+#fcWoolSlab 205 & 220
+@material(blockid=[220,205], data=range(16), transparent=True)
+def fcWoolSlab(self, blockid, data):
+
+    texture = self.load_image_texture("textures/blocks/cloth_{0}.png".format(data))
+    side = texture
+    top = side
+    
+    # cut the side texture in half
+    mask = side.crop((0,8,16,16))
+    side = Image.new(side.mode, side.size, self.bgcolor)
+    alpha_over(side, mask,(0,0,16,8), mask)
+
+    # plain slab
+    top = self.transform_image_top(top)
+    side = self.transform_image_side(side)
+    otherside = side.transpose(Image.FLIP_LEFT_RIGHT)
+
+    sidealpha = side.split()[3]
+    side = ImageEnhance.Brightness(side).enhance(0.9)
+    side.putalpha(sidealpha)
+    othersidealpha = otherside.split()[3]
+    otherside = ImageEnhance.Brightness(otherside).enhance(0.8)
+    otherside.putalpha(othersidealpha)
+
+    # upside down slab
+    delta = 0
+    if(blockid==205):
+        delta = 6
+
+    img = Image.new("RGBA", (24,24), self.bgcolor)
+    alpha_over(img, side, (0,12 - delta), side)
+    alpha_over(img, top, (0,6 - delta), top)
+    alpha_over(img, otherside, (12,12 - delta), otherside)
+
+    return img
+
+#fcAestheticOpaque
+@material(blockid=215, data=range(12), solid=True)
+def fcAestheticOpaque(self, blockid, data):
+    #Wicker
+    if data==0:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockWicker.png"), self.load_image_texture("textures/blocks/fcBlockWicker.png"))
+    # oldDung
+    if data==1:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockDung.png"), self.load_image_texture("textures/blocks/fcBlockDung.png"))
+    # oldSteel
+    if data==2:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockSoulforgedSteel.png"), self.load_image_texture("textures/blocks/fcBlockSoulforgedSteel.png"))
+    #Hellfire
+    if data==3:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockConcentratedHellfire.png"), self.load_image_texture("textures/blocks/fcBlockConcentratedHellfire.png"))
+    #Padding
+    if data==4:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockPadding.png"), self.load_image_texture("textures/blocks/fcBlockPadding.png"))
+    #Soap
+    if data==5:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockSoap_top.png"), self.load_image_texture("textures/blocks/fcBlockSoap_top.png"))
+    #Rope
+    if data==6:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockRope_top.png"), self.load_image_texture("textures/blocks/fcBlockRope_side.png"))
+    #Flint
+    if data==7:
+        return self.build_block(self.load_image_texture("textures/blocks/bedrock.png"), self.load_image_texture("textures/blocks/bedrock.png"))
+    #NetherrackWithGrowth
+    if data==8:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockGroth_top_grown.png"), self.load_image_texture("textures/blocks/fcBlockGroth_side.png"))
+    #WhiteStone
+    if data==9:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockWhiteStone.png"), self.load_image_texture("textures/blocks/fcBlockWhiteStone.png"))
+    #WhiteCobble
+    if data==10:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockWhiteCobble.png"), self.load_image_texture("textures/blocks/fcBlockWhiteCobble.png"))
+    #Barrel
+    if data==11:
+        return self.build_block(self.load_image_texture("textures/blocks/fcBlockBarrel_top.png"), self.load_image_texture("textures/blocks/fcBlockBarrel_side.png"))
+    
+#fcAestheticNonOpaque
+@material(blockid=216, data=range(12), solid=True, transparent=True, nospawn=True)
+def fcAestheticNonOpaque(self, blockid, data):
+    #Urns -- ToDo -- will require fancy cropping
+    #if data==0:
+    #    return
+    
+    #if data==1:
+    #    return
+    #if data==2:
+    #    return
+    #if data==3:
+    #    return
+    #if data==4:
+    #    return
+    
+    #WickerSlab whiteCobble
+    if (data==5 or data==9 or data==10 or data==11):
+        if(data==5 or data==9):
+            side = self.load_image_texture("textures/blocks/fcBlockWicker.png")
+        if(data==10 or data==11):
+            side = self.load_image_texture("textures/blocks/fcBlockWhiteCobble.png")
+        top = side
+        
+        # cut the side texture in half
+        mask = side.crop((0,8,16,16))
+        side = Image.new(side.mode, side.size, self.bgcolor)
+        alpha_over(side, mask,(0,0,16,8), mask)
+    
+        # plain slab
+        top = self.transform_image_top(top)
+        side = self.transform_image_side(side)
+        otherside = side.transpose(Image.FLIP_LEFT_RIGHT)
+    
+        sidealpha = side.split()[3]
+        side = ImageEnhance.Brightness(side).enhance(0.9)
+        side.putalpha(sidealpha)
+        othersidealpha = otherside.split()[3]
+        otherside = ImageEnhance.Brightness(otherside).enhance(0.8)
+        otherside.putalpha(othersidealpha)
+    
+        # upside down slab
+        delta = 0
+        if(data==9 or data==11):
+            delta = 6
+    
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+        alpha_over(img, side, (0,12 - delta), side)
+        alpha_over(img, top, (0,6 - delta), top)
+        alpha_over(img, otherside, (12,12 - delta), otherside)
+    
+        return img
+
+    #grates, wicker & slats
+    #this has some ToDo as they aren't attaching correctly 
+    if (data==6 or data==7 or data==8):
+        #grate
+        if data==6:
+            t = self.load_image_texture("textures/blocks/fcBlockGrate.png")
+        #whiker
+        if data==7:
+            t = self.load_image_texture("textures/blocks/fcBlockWicker.png")
+        #slats
+        if data==8:
+            t = self.load_image_texture("textures/blocks/fcBlockSlats.png")
+                
+        left = t.copy()
+        right = t.copy()
+    
+        # generate the four small pieces of the pane
+        ImageDraw.Draw(right).rectangle((0,0,7,15),outline=(0,0,0,0),fill=(0,0,0,0))
+        ImageDraw.Draw(left).rectangle((8,0,15,15),outline=(0,0,0,0),fill=(0,0,0,0))
+        
+        up_left = self.transform_image_side(left)
+        up_right = self.transform_image_side(right).transpose(Image.FLIP_TOP_BOTTOM)
+        dw_right = self.transform_image_side(right)
+        dw_left = self.transform_image_side(left).transpose(Image.FLIP_TOP_BOTTOM)
+    
+        # Create img to compose the texture
+        img = Image.new("RGBA", (24,24), self.bgcolor)
+    
+        # +x axis points top right direction
+        # +y axis points bottom right direction
+        # First compose things in the back of the image, 
+        # then things in the front.
+    
+        ## this does not seem to apply to current datavalues.. much like fenceposts.
+        # confirmed by FC that connection data is not part of block data.
+        # Either is vanilla so that data must be getting pulled somewhere else.
+        # Will need to dig deeper after most blocks are handeled.
+        if (data & 0b0001) == 1 or data == 0:
+            alpha_over(img,up_left, (6,3),up_left)    # top left
+        if (data & 0b1000) == 8 or data == 0:
+            alpha_over(img,up_right, (6,3),up_right)  # top right
+        if (data & 0b0010) == 2 or data == 0:
+            alpha_over(img,dw_left, (6,3),dw_left)    # bottom left    
+        if (data & 0b0100) == 4 or data == 0:
+            alpha_over(img,dw_right, (6,3),dw_right)  # bottom right
+    
+        return img
