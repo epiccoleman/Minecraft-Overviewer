@@ -4306,9 +4306,13 @@ def fcSixDirectionalBlocks(self, blockid, data):
     return img;
 
 #BTW Sub-blocks (Siding & Fences)
-@material(blockid=[184,185,186,188,196,198,200], data=range(16), transparent=True, nospawn=True)
+@material(blockid=[178,184,185,186,188,196,198,200,202], data=range(16), transparent=True, nospawn=True)
 def fcBlockDeco(self, blockid, data):
     #Images for various sub blocks
+    if blockid == 178: # Black Stone
+        block_top = self.load_image_texture("textures/blocks/fcBlockBlackStone.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockBlackStone.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockBlackStone.png").copy()
     if blockid == 184: # Oak
         block_top = self.load_image_texture("textures/blocks/FCBlockDecorativeWoodOak.png").copy()
         block_side = self.load_image_texture("textures/blocks/FCBlockDecorativeWoodOak.png").copy()
@@ -4341,6 +4345,10 @@ def fcBlockDeco(self, blockid, data):
         block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
         block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
         fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
+    elif blockid == 202: # Stone Brick
+        block_top = self.load_image_texture("textures/blocks/stonebrick.png").copy()
+        block_side = self.load_image_texture("textures/blocks/stonebrick.png.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/stonebrick.png.png").copy()
     
     if data in (0,2): #Top/Bottom Siding based on slab code
         # cut the side texture in half
