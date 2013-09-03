@@ -1382,7 +1382,7 @@ def slabs(self, blockid, data):
         side = self.load_image_texture("textures/blocks/sandstone_side.png")
     elif texture== 2: # wooden slab
         top = side = self.load_image_texture("textures/blocks/wood.png")
-    elif texture== 3: # c43obblestone slab
+    elif texture== 3: # cobblestone slab
         top = side = self.load_image_texture("textures/blocks/stonebrick.png")
     elif texture== 4: # brick
         top = side = self.load_image_texture("textures/blocks/brick.png")
@@ -4000,16 +4000,16 @@ def quartz_block(self, blockid, data):
     
     if data in (0,1): # normal and chiseled quartz block
         if data == 0:
-            top = self.load_image_texture("textures/blocks/quartzblock_top.png")
-            side = self.load_image_texture("textures/blocks/quartzblock_side.png")
+            top = self.load_image_texture("textures/blocks/fcBlockBlackStone.png")
+            side = self.load_image_texture("textures/blocks/fcBlockBlackStone.png")
         else:
-            top = self.load_image_texture("textures/blocks/quartzblock_chiseled_top.png")
-            side = self.load_image_texture("textures/blocks/quartzblock_chiseled.png")    
+            top = self.load_image_texture("textures/blocks/fcBlockBlackStone_chiseled.png")
+            side = self.load_image_texture("textures/blocks/fcBlockBlackStone_chiseled.png")    
         return self.build_block(top, side)
     
     # pillar quartz block with orientation
-    top = self.load_image_texture("textures/blocks/quartzblock_lines_top.png")
-    side = self.load_image_texture("textures/blocks/quartzblock_lines.png").copy()
+    top = self.load_image_texture("textures/blocks/fcBlockBlackStone_lines_top.png")
+    side = self.load_image_texture("textures/blocks/fcBlockBlackStone_lines.png").copy()
     if data == 2: # vertical
         return self.build_block(top, side)
     elif data == 3: # north-south oriented
@@ -4306,7 +4306,7 @@ def fcSixDirectionalBlocks(self, blockid, data):
     return img;
 
 #BTW Sub-blocks (Siding & Fences)
-@material(blockid=[178,184,185,186,188,196,198,200,202], data=range(16), transparent=True, nospawn=True)
+@material(blockid=[178,184,185,186,188,191,196,198,200,202], data=range(16), transparent=True, nospawn=True)
 def fcBlockDeco(self, blockid, data):
     #Images for various sub blocks
     if blockid == 178: # Black Stone
@@ -4346,9 +4346,9 @@ def fcBlockDeco(self, blockid, data):
         block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
         fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
     elif blockid == 202: # Stone Brick
-        block_top = self.load_image_texture("textures/blocks/stonebrick.png").copy()
-        block_side = self.load_image_texture("textures/blocks/stonebrick.png").copy()
-        fence_small_side = self.load_image_texture("textures/blocks/stonebrick.png").copy()
+        block_top = self.load_image_texture("textures/blocks/stonebricksmooth.png").copy()
+        block_side = self.load_image_texture("textures/blocks/stonebricksmooth.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/stonebricksmooth.png").copy()
     
     if data in (0,2): #Top/Bottom Siding based on slab code
         # cut the side texture in half
