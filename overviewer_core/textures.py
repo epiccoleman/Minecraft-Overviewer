@@ -4330,9 +4330,9 @@ def fcBlockDeco(self, blockid, data):
         block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeNetherBrick.png").copy()
         fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeNetherBrick.png").copy()
     elif blockid == 191: # White Stone
-        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteSone.png").copy()
-        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteSone.png").copy()
-        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteSone.png").copy()
+        block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteStone.png").copy()
+        block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteStone.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWhiteStone.png").copy()
     elif blockid == 196: # Spruce
         block_top = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodSpruce.png").copy()
         block_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodSpruce.png").copy()
