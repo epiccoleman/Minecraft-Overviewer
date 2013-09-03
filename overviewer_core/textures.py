@@ -4347,8 +4347,8 @@ def fcBlockDeco(self, blockid, data):
         fence_small_side = self.load_image_texture("textures/blocks/fcBlockDecorativeWoodJungle.png").copy()
     elif blockid == 202: # Stone Brick
         block_top = self.load_image_texture("textures/blocks/stonebrick.png").copy()
-        block_side = self.load_image_texture("textures/blocks/stonebrick.png.png").copy()
-        fence_small_side = self.load_image_texture("textures/blocks/stonebrick.png.png").copy()
+        block_side = self.load_image_texture("textures/blocks/stonebrick.png").copy()
+        fence_small_side = self.load_image_texture("textures/blocks/stonebrick.png").copy()
     
     if data in (0,2): #Top/Bottom Siding based on slab code
         # cut the side texture in half
