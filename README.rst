@@ -1,12 +1,19 @@
 ====================
-Minecraft Overviewer  |Build Status|
+Minecraft Overviewer  BTW Edition
 ====================
-By Andrew Brown and contributors (see CONTRIBUTORS.rst).
+Original Work By Andrew Brown and contributors (see CONTRIBUTORS.rst).
 
-Documentation:
+
+BTW Edition GitHub Repo:
+    http://github.com/Pfilson/Minecraft-Overviewer
+    
+Block Status List:
+    http://github.com/Pfilson/Minecraft-Overviewer/wiki/Block-Status-List-%5BWIP%5D
+
+Original Documentation:
     http://docs.overviewer.org
 
-Github code repository:
+Source Github code repository:
     http://github.com/overviewer/Minecraft-Overviewer
 	
 Travis-CI:
@@ -84,5 +91,3 @@ https://github.com/overviewer/Minecraft-Overviewer/issues
 
 Feel free to comment on issues, report new issues, and vote on issues that are
 important to you.
-
-.. |Build Status| image:: https://secure.travis-ci.org/overviewer/Minecraft-Overviewer.png?branch=master
