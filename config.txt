@@ -1,0 +1,11 @@
+worlds["SpaceGrass"] = "/root/Minecraft-Overviewer/world"
+
+renders["normal"] = { 
+	"world" : "SpaceGrass", 
+	"title" : "Overworld",
+	"rendermode" : smooth_lighting,
+	"dimension" : "overworld"
+}
+
+outputdir = "/root/Minecraft-Overviewer/map"
+texturepath = "/root/Minecraft-Overviewer/BTWTex.zip"
