@@ -1,10 +1,31 @@
 worlds["SpaceGrass"] = "/root/Minecraft-Overviewer/world"
 
-renders["normal"] = { 
+renders["overworld_day"] = { 
 	"world" : "SpaceGrass", 
-	"title" : "Overworld",
+	"title" : "Overworld Day",
 	"rendermode" : smooth_lighting,
 	"dimension" : "overworld"
+}
+
+renders["overworld_night"] = { 
+	"world" : "SpaceGrass", 
+	"title" : "Overworld Night",
+	"rendermode" : smooth_night,
+	"dimension" : "overworld"
+}
+
+renders["overworld_cave"] = { 
+	"world" : "SpaceGrass", 
+	"title" : "Caves",
+	"rendermode" : cave,
+	"dimension" : "overworld"
+}
+
+renders["survivalnether"] = {
+    "world": "SpaceGrass",
+    "title": "Nether",
+    "rendermode": nether_smooth_lighting,
+    "dimension": "nether",
 }
 
 outputdir = "/root/Minecraft-Overviewer/map"
