@@ -28,6 +28,9 @@ overviewer_core/c_overviewer.dylib
 # generated files
 overviewer_core/overviewer_version.py
 overviewer_core/src/primitives.h
+world-backup/
+world/
+map/
 
 # Mac OS X noise
 .DS_Store
